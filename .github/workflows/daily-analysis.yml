@@ -1,0 +1,25 @@
+name: Daily Stock Analysis
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 每天UTC 1:00 = 北京时间9:00
+  workflow_dispatch:  # 允许手动运行
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - run: pip install requests
+    
+    - name: Run analysis
+      env:
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      run: python stock_ai_agent.py
